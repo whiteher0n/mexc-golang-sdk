@@ -18,11 +18,13 @@ func NewRest(mexcHttp *mexchttp.Client) *Rest {
 }
 
 type Ws struct {
+	*mexcws.MEXCWebSocket
 	MarketService *mexcwsmarket.Service
 }
 
 func NewWs(mexcWs *mexcws.MEXCWebSocket) *Ws {
 	return &Ws{
+		MEXCWebSocket: mexcWs,
 		MarketService: mexcwsmarket.New(mexcWs),
 	}
 }
