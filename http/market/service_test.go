@@ -2,6 +2,7 @@ package mexchttpmarket
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -25,4 +26,20 @@ func TestService_Ping(t *testing.T) {
 
 	expectedResponse := "{}"
 	assert.Equal(t, expectedResponse, response)
+}
+
+func TestService_ExchangeInfo(t *testing.T) {
+	client := mexchttp.NewClient("", "", &http.Client{})
+
+	service := &Service{
+		client: client,
+	}
+
+	ctx := context.Background()
+
+	response, err := service.ExchangeInfo(ctx, []string{"BTCUSDT", "ETHUSDT"})
+
+	assert.NoError(t, err)
+
+	fmt.Println(response)
 }

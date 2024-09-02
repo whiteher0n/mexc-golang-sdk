@@ -51,8 +51,8 @@ func (c *Client) newRequest(ctx context.Context, method, endpoint string, params
 	reqURL.RawQuery = query.Encode()
 
 	// Генерация подписи
-	signature := c.generateSignature(reqURL.RawQuery)
-	query.Add("signature", signature)
+	//signature := c.generateSignature(reqURL.RawQuery)
+	//query.Add("signature", signature)
 	reqURL.RawQuery = query.Encode()
 
 	// Создание HTTP-запроса
