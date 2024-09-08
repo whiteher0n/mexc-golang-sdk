@@ -43,3 +43,19 @@ func TestService_ExchangeInfo(t *testing.T) {
 
 	fmt.Println(response)
 }
+
+func TestService_Time(t *testing.T) {
+	client := mexchttp.NewClient("", "", &http.Client{})
+
+	service := &Service{
+		client: client,
+	}
+
+	ctx := context.Background()
+
+	response, err := service.Time(ctx)
+
+	assert.NoError(t, err)
+
+	fmt.Println(response)
+}

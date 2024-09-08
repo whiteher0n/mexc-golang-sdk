@@ -7,6 +7,27 @@ import (
 	"strings"
 )
 
+func (c *Service) ExchangeInfo(ctx context.Context, symbols []string) (*ExchangeInfo, error) {
+	endpoint := "/api/v3/exchangeInfo"
+
+	params := make(map[string]string)
+	params["symbols"] = strings.Join(symbols, ",")
+
+	res, err := c.client.SendRequest(ctx, "GET", endpoint, params)
+	if err != nil {
+		fmt.Printf("Error: %s\n", err)
+		return nil, err
+	}
+
+	var info ExchangeInfo
+	err = json.Unmarshal(res, &info)
+	if err != nil {
+		return nil, err
+	}
+
+	return &info, nil
+}
+
 type ExchangeInfo struct {
 	Timezone        string           `json:"timezone"`
 	ServerTime      int64            `json:"serverTime"`
@@ -51,25 +72,4 @@ type RateLimit struct {
 
 type ExchangeFilter struct {
 	// Add fields as needed
-}
-
-func (c *Service) ExchangeInfo(ctx context.Context, symbols []string) (*ExchangeInfo, error) {
-	endpoint := "/api/v3/exchangeInfo"
-
-	params := make(map[string]string)
-	params["symbols"] = strings.Join(symbols, ",")
-
-	res, err := c.client.SendRequest(ctx, "GET", endpoint, params)
-	if err != nil {
-		fmt.Printf("Error: %s\n", err)
-		return nil, err
-	}
-
-	var info ExchangeInfo
-	err = json.Unmarshal(res, &info)
-	if err != nil {
-		return nil, err
-	}
-
-	return &info, nil
 }
