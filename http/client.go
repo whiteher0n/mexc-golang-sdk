@@ -5,10 +5,13 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
+	mexchttpmarket "github.com/bogdankorobka/mexc-golang-sdk/http/market"
 	"io"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 // Client представляет клиента для работы с API MEXC.
@@ -17,6 +20,8 @@ type Client struct {
 	secretKey  string
 	baseURL    string
 	httpClient *http.Client
+
+	SyncTimeDeltaMilliSeconds int64
 }
 
 // NewClient создает новый экземпляр клиента для работы с API MEXC.
@@ -36,6 +41,24 @@ func (c *Client) generateSignature(query string) string {
 	return hex.EncodeToString(mac.Sum(nil))
 }
 
+// SyncServerTime синхронизирует время сервера.
+func (c *Client) SyncServerTime(ctx context.Context) error {
+	service := mexchttpmarket.New(c)
+
+	r, err := service.Time(ctx)
+	if err != nil {
+		return fmt.Errorf("get server time: %w", err)
+	}
+
+	if r.ServerTime == 0 {
+		return errors.New("server time is empty")
+	}
+
+	c.SyncTimeDeltaMilliSeconds = time.Now().UnixMilli() - r.ServerTime
+
+	return nil
+}
+
 // newRequest создает новый HTTP-запрос с контекстом и подписью.
 func (c *Client) newRequest(ctx context.Context, method, endpoint string, params map[string]string) (*http.Request, error) {
 	// Создание URL с параметрами
@@ -52,6 +75,10 @@ func (c *Client) newRequest(ctx context.Context, method, endpoint string, params
 
 	//Генерация подписи
 	signature := c.generateSignature(reqURL.RawQuery)
+	query.Add("signature", signature)
+
+	//Генерация времени
+	timestamp := c.generateSignature(reqURL.RawQuery)
 	query.Add("signature", signature)
 
 	reqURL.RawQuery = query.Encode()

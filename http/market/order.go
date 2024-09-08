@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strconv"
 )
 
 func (s *Service) CreateOrder(ctx context.Context, req *CreateOrderRequest) (*OrderResponse, error) {
@@ -15,7 +14,7 @@ func (s *Service) CreateOrder(ctx context.Context, req *CreateOrderRequest) (*Or
 	params["symbol"] = req.Symbol
 	params["side"] = string(req.Side)
 	params["type"] = string(req.Type)
-	params["timestamp"] = strconv.FormatInt(req.Timestamp, 10)
+	params["timestamp"] = s.getTimestamp()
 
 	if req.Quantity != nil {
 		params["quantity"] = *req.Quantity
@@ -57,7 +56,6 @@ type CreateOrderRequest struct {
 	Price            *string `json:"price,omitempty"`
 	NewClientOrderId *string `json:"newClientOrderId,omitempty"`
 	RecvWindow       *int64  `json:"recvWindow,omitempty"`
-	Timestamp        int64   `json:"timestamp"`
 }
 
 type Side string
