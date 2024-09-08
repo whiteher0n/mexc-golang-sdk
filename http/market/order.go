@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func (s *Service) createOrder(ctx context.Context, req *CreateOrderRequest) (*OrderResponse, error) {
+func (s *Service) CreateOrder(ctx context.Context, req *CreateOrderRequest) (*OrderResponse, error) {
 	endpoint := "/api/v3/order"
 
 	params := make(map[string]string)
