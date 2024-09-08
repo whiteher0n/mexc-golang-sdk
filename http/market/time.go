@@ -6,10 +6,10 @@ import (
 	"fmt"
 )
 
-func (c *Service) Time(ctx context.Context) (*TimeResponse, error) {
+func (s *Service) Time(ctx context.Context) (*TimeResponse, error) {
 	endpoint := "/api/v3/time"
 
-	res, err := c.client.SendRequest(ctx, "GET", endpoint, nil)
+	res, err := s.client.SendRequest(ctx, "GET", endpoint, nil)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 		return nil, err

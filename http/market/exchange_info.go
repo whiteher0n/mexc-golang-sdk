@@ -7,13 +7,13 @@ import (
 	"strings"
 )
 
-func (c *Service) ExchangeInfo(ctx context.Context, symbols []string) (*ExchangeInfo, error) {
+func (s *Service) ExchangeInfo(ctx context.Context, symbols []string) (*ExchangeInfo, error) {
 	endpoint := "/api/v3/exchangeInfo"
 
 	params := make(map[string]string)
 	params["symbols"] = strings.Join(symbols, ",")
 
-	res, err := c.client.SendRequest(ctx, "GET", endpoint, params)
+	res, err := s.client.SendRequest(ctx, "GET", endpoint, params)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 		return nil, err
