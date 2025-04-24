@@ -53,7 +53,8 @@ func (s *Service) OrderBook(symbols []string, level string, listener func(*Order
 	return s.client.Send(req)
 }
 
-func (s *Service) OrderBookV2(symbols []string, level string, listener func(*OrderBook)) error {
+func (s *Service) OrderBookV3(symbols []string, level string, listener func(*OrderBook)) error {
+	fmt.Println("Connecting Orderbook... ")
 	lstnr := func(message string) {
 		var book OrderBook
 
@@ -72,7 +73,8 @@ func (s *Service) OrderBookV2(symbols []string, level string, listener func(*Ord
 	}
 
 	for _, symbol := range symbols {
-		channel := fmt.Sprintf("spot@public.aggre.depth.v3.api.pb@%s@%s", symbol, level)
+		channel := fmt.Sprintf("spot@public.aggre.depth.v3.api.pb@%sms@%s", level, symbol)
+		fmt.Println(channel)
 
 		req.Params = append(req.Params, channel)
 		s.client.Subs.Add(channel, lstnr)

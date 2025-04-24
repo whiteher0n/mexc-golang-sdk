@@ -56,7 +56,8 @@ func TestOrderbookWs(t *testing.T) {
 	fmt.Println("END")
 }
 
-func TestOrderbookV2Ws(t *testing.T) {
+// Works @note
+func TestOrderbookV3Ws(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	wc := mexcws.NewMEXCWebSocket(func(err error) {
@@ -67,12 +68,11 @@ func TestOrderbookV2Ws(t *testing.T) {
 
 	ws := NewWs(wc)
 
-	ws.MarketService.OrderBookV2(
+	ws.MarketService.OrderBookV3(
 		[]string{
 			"BTCUSDT",
-			"ETHUSDT",
 		},
-		"5",
+		"10",
 		func(book *mexcwsmarket.OrderBook) {
 			fmt.Println("Symbol: ", book.Symbol)
 			fmt.Println("ASKS: ", book.Data.Asks)
@@ -87,6 +87,7 @@ func TestOrderbookV2Ws(t *testing.T) {
 	fmt.Println("END")
 }
 
+// Works @note
 func TestWsTrade(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -104,6 +105,32 @@ func TestWsTrade(t *testing.T) {
 		func(deal *mexcwsmarket.Trade) {
 			fmt.Println("Symbol: ", deal.Symbol)
 			fmt.Println("Data: ", deal.Data)
+			fmt.Println("-----------")
+		},
+	)
+
+	time.Sleep(3 * time.Second)
+	cancel()
+	time.Sleep(2 * time.Second)
+	fmt.Println("END")
+}
+
+func TestKlinesV3Ws(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	wc := mexcws.NewMEXCWebSocket(func(err error) {
+		fmt.Println("Error: ", err)
+	})
+
+	wc.Connect(ctx)
+
+	ws := NewWs(wc)
+
+	ws.MarketService.Klines(
+		"BTCUSDT",
+		"5",
+		func(book *mexcwsmarket.Klines) {
+			fmt.Println("Symbol: ", book.Symbol)
 			fmt.Println("-----------")
 		},
 	)
