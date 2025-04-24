@@ -52,3 +52,31 @@ func (s *Service) OrderBook(symbols []string, level string, listener func(*Order
 
 	return s.client.Send(req)
 }
+
+func (s *Service) OrderBookV2(symbols []string, level string, listener func(*OrderBook)) error {
+	lstnr := func(message string) {
+		var book OrderBook
+
+		err := json.Unmarshal([]byte(message), &book)
+		if err != nil {
+			fmt.Println("OrderBook listener unmarshal error:", err)
+			return
+		}
+
+		listener(&book)
+	}
+
+	req := &mexcws.WsReq{
+		Method: "SUBSCRIPTION",
+		Params: []string{},
+	}
+
+	for _, symbol := range symbols {
+		channel := fmt.Sprintf("spot@public.aggre.depth.v3.api.pb@%s@%s", symbol, level)
+
+		req.Params = append(req.Params, channel)
+		s.client.Subs.Add(channel, lstnr)
+	}
+
+	return s.client.Send(req)
+}
